@@ -3,33 +3,36 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Movie;
-use App\Models\Genre;
+use Illuminate\Support\Facades\DB;
 
 class MovieController extends Controller
 {
-    // Trang chủ: hiển thị 12 bộ phim có popularity > 450 và vote_average > 7
-    // sắp xếp giảm dần theo release_date
+    // Trang chủ: hiển thị 12 bộ phim phổ biến
     public function index()
     {
-        $movies = Movie::where('popularity', '>', 450)
+        $movies = DB::table('movie')
+            ->where('status', 1)
+            ->where('popularity', '>', 450)
             ->where('vote_average', '>', 7)
             ->orderBy('release_date', 'desc')
-            ->take(12)
-            ->get();
+            ->paginate(12);
 
         return view('movie.index', compact('movies'));
     }
 
-    // Hiển thị 12 bộ phim theo thể loại, sắp xếp giảm dần theo release_date
+    // Hiển thị phim theo thể loại
     public function byGenre($id)
     {
-        $genre = Genre::findOrFail($id);
+        $genre = DB::table('genre')->where('id', $id)->first();
+        if (!$genre) abort(404);
 
-        $movies = $genre->movies()
-            ->orderBy('release_date', 'desc')
-            ->take(12)
-            ->get();
+        $movies = DB::table('movie')
+            ->join('movie_genre', 'movie.id', '=', 'movie_genre.id_movie')
+            ->where('movie_genre.id_genre', $id)
+            ->where('movie.status', 1)
+            ->select('movie.*')
+            ->orderBy('movie.release_date', 'desc')
+            ->paginate(12);
 
         return view('movie.index', [
             'movies' => $movies,
@@ -37,20 +40,91 @@ class MovieController extends Controller
         ]);
     }
 
-    // Hiển thị chi tiết bộ phim
-    public function show($id)
+    // Hiển thị chi tiết phim (đổi show thành view để khớp với link cũ)
+    public function view($id)
     {
-        $movie = Movie::with('genres')->findOrFail($id);
+        $movie = DB::table('movie')->where('id', $id)->first();
+        if (!$movie) abort(404);
         return view('movie.show', compact('movie'));
     }
 
-    // Tìm kiếm bộ phim
+    // Tìm kiếm phim
     public function search(Request $request)
     {
         $keyword = $request->input('keyword');
-        
-        $movies = \Illuminate\Support\Facades\DB::select("select * from movie where movie_name_vn like ?", ["%".$keyword."%"]);
+        $movies = DB::table('movie')
+            ->where('status', 1)
+            ->where('movie_name_vn', 'LIKE', "%$keyword%")
+            ->orderBy('release_date', 'desc')
+            ->paginate(12)
+            ->appends(['keyword' => $keyword]);
 
         return view('movie.index', compact('movies', 'keyword'));
     }
+
+    // Trang quản lý (Admin)
+    public function admin()
+    {
+        $movies = DB::table('movie')
+            ->where('status', 1)
+            ->get();
+        return view('movie.admin', compact('movies'));
+    }
+
+    // Xóa mềm phim
+    public function delete($id)
+    {
+        DB::table('movie')->where('id', $id)->update(['status' => 0]);
+        return redirect('/admin')->with('success', 'Xóa phim thành công');
+    }
+
+    // Trang thêm phim mới
+    public function create()
+    {
+        return view('movie.create');
+    }
+
+    // Lưu phim mới
+    public function store(Request $request)
+    {
+        $request->validate([
+            'movie_name' => 'required',
+            'movie_name_vn' => 'required',
+            'release_date' => 'required|date_format:Y-m-d',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'overview_vn' => 'required',
+            'vote_average' => 'required|numeric',
+        ], [
+            'required' => 'Trường :attribute là bắt buộc.',
+            'image' => 'File tải lên phải là định dạng ảnh.',
+            'date_format' => 'Ngày phát hành phải có định dạng yyyy-mm-dd.',
+            'numeric' => 'Trường :attribute phải là một số.',
+        ], [
+            'movie_name' => 'Tên phim gốc',
+            'movie_name_vn' => 'Tên phim (VN)',
+            'release_date' => 'Ngày phát hành',
+            'image' => 'Ảnh đại diện',
+            'overview_vn' => 'Mô tả (VN)',
+            'vote_average' => 'Điểm số',
+        ]);
+
+        $imageName = time().'.'.$request->image->extension();  
+        $request->image->move(public_path('images'), $imageName);
+
+        DB::table('movie')->insert([
+            'movie_name' => $request->movie_name,
+            'movie_name_vn' => $request->movie_name_vn,
+            'release_date' => $request->release_date,
+            'image' => '/'.$imageName,
+            'image_link' => asset('images/'.$imageName),
+            'overview_vn' => $request->overview_vn,
+            'vote_average' => $request->vote_average,
+            'status' => 1,
+            'popularity' => 500,
+        ]);
+
+        return redirect('/admin')->with('success', 'Thêm phim mới thành công!');
+    }
 }
+
+

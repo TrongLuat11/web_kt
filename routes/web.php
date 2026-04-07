@@ -1,9 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\MovieController;
-
-Route::get('/', [MovieController::class, 'index']);
-Route::get('/theloai/{id}', [MovieController::class, 'byGenre']);
-Route::get('/phim/{id}', [MovieController::class, 'show']);
-Route::post('/timkiem', [MovieController::class, 'search']);
+Route::get('/', [App\Http\Controllers\MovieController::class, 'index']);
+Route::get('/theloai/{id}', [App\Http\Controllers\MovieController::class, 'byGenre']);
+Route::get('/view/{id}', [App\Http\Controllers\MovieController::class, 'view']);
+Route::post('/timkiem', [App\Http\Controllers\MovieController::class, 'search']);
+Route::get('/admin', [App\Http\Controllers\MovieController::class, 'admin']);
+Route::get('/admin/create', [App\Http\Controllers\MovieController::class, 'create']);
+Route::post('/admin/store', [App\Http\Controllers\MovieController::class, 'store']);
+Route::get('/delete/{id}', [App\Http\Controllers\MovieController::class, 'delete']);
