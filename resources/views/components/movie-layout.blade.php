@@ -10,7 +10,6 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <script src="{{asset('library/jquery-3.7.1.js')}}" ></script>
         <style>
-            /* Định dạng màu nền và màu chữ của menu */
           
             .list-movie
             {
@@ -52,20 +51,35 @@
                 align-items: center;
                 padding: 40px;
                 box-sizing: border-box;
+                position: relative; 
+                overflow: hidden;
+            }
+            .banner-logo-bg {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                opacity: 0.35;
+                pointer-events: none;
+                z-index: 0;
             }
             .banner-content {
                 text-align: center;
                 width: 100%;
+                position: relative;
+                z-index: 1;
             }
             .banner h2 {
                 font-size: 3rem;
-                font-weight: normal;
-                margin-bottom: 0px;
+                font-weight: 700;
+                margin-bottom: 5px;
             }
             .banner h3 {
-                font-size: 1.5rem;
-                font-weight: normal;
-                margin-bottom: 30px;
+                font-size: 2rem;
+                font-weight: 500;
+                margin-bottom: 60px;
             }
             .search-input
             {
@@ -80,7 +94,7 @@
                 border-radius: 30px;
                 border: none;
                 padding-left: 20px;
-                padding-right: 120px; /* space for the button */
+                padding-right: 120px; 
                 font-size: 1rem;
                 color: rgba(0,0,0,0.6);
                 outline: none;
@@ -114,18 +128,19 @@
             }
         </style>
     </head>
-    <body>
+    <body style="background-color: #f8f9fa;">
+        <div style="background-color: #222; height: 35px; width: 100%; border-bottom: 2px solid #444;"></div>
         <header style='text-align:center'>
             <div class='banner'>
+                <img src="{{ asset('banner.jpg') }}" class="banner-logo-bg" alt="Logo">
                 <div class="banner-content">
                     <h2>Welcome.</h2>
                     <h3>Millions of movies, TV shows and people to discover. Explore now.</h3>
                 </div>
                 <div class='search-input'>
-                    <form method="post" action="{{url('/timkiem')}}">
-                        <input type="text" name='keyword' value="{{ isset($keyword) ? $keyword : '' }}" placeholder="Nhập tên bộ phim yêu thích để tìm kiếm">
-                        <button class="search-btn">Tìm kiếm</button>
-                        {{csrf_field()}}
+                    <form method="get" action="{{url('/timkiem')}}">
+                        <input type="text" name='keyword' value="{{ request('keyword') }}" placeholder="Nhập tên bộ phim yêu thích để tìm kiếm">
+                        <button type="submit" class="search-btn">Tìm kiếm</button>
                     </form>
                 </div>
             </div>

@@ -21,7 +21,7 @@ class MovieController extends Controller
     }
 
     // Hiển thị phim theo thể loại
-    public function byGenre($id)
+    public function theloai($id)
     {
         $genre = DB::table('genre')->where('id', $id)->first();
         if (!$genre) abort(404);
@@ -40,18 +40,18 @@ class MovieController extends Controller
         ]);
     }
 
-    // Hiển thị chi tiết phim (đổi show thành view để khớp với link cũ)
+    // Hiển thị chi tiết phim
     public function view($id)
     {
         $movie = DB::table('movie')->where('id', $id)->first();
         if (!$movie) abort(404);
-        return view('movie.show', compact('movie'));
+        return view('movie.detail', compact('movie'));
     }
 
     // Tìm kiếm phim
-    public function search(Request $request)
+    public function timkiem(Request $request)
     {
-        $keyword = $request->input('keyword');
+        $keyword = $request->query('keyword');
         $movies = DB::table('movie')
             ->where('status', 1)
             ->where('movie_name_vn', 'LIKE', "%$keyword%")
@@ -120,11 +120,9 @@ class MovieController extends Controller
             'overview_vn' => $request->overview_vn,
             'vote_average' => $request->vote_average,
             'status' => 1,
-            'popularity' => 500,
+            'popularity' => 500, // Default popularity to show on home
         ]);
 
         return redirect('/admin')->with('success', 'Thêm phim mới thành công!');
     }
 }
-
-
