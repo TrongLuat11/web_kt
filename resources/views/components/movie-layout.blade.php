@@ -130,7 +130,6 @@
     </head>
     <body style="background-color: #f8f9fa;">
         <div style="background-color: #222; height: 35px; width: 100%; border-bottom: 2px solid #444;"></div>
-        <header style='text-align:center'>
             <div class='banner'>
                 <img src="{{ asset('banner.jpg') }}" class="banner-logo-bg" alt="Logo">
                 <div class="banner-content">
@@ -144,7 +143,6 @@
                     </form>
                 </div>
             </div>
-        </header>
         <main style="max-width:1200px; margin:2px auto;">
         <div class='row'>
             <div class='col-3 pr-0'>

@@ -91,7 +91,7 @@ class MovieController extends Controller
             'movie_name' => 'required',
             'movie_name_vn' => 'required',
             'release_date' => 'required|date_format:Y-m-d',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'required|mimes:jpeg,png,jpg,gif,webp,svg,bmp,avif|max:10240',
             'overview_vn' => 'required',
             'vote_average' => 'required|numeric',
         ], [
@@ -113,6 +113,7 @@ class MovieController extends Controller
 
         DB::table('movie')->insert([
             'movie_name' => $request->movie_name,
+            'original_name' => $request->movie_name,
             'movie_name_vn' => $request->movie_name_vn,
             'release_date' => $request->release_date,
             'image' => '/'.$imageName,
