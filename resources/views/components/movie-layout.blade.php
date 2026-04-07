@@ -41,7 +41,7 @@
                 width: 100%;
                 max-width: 1200px;
                 min-height: 300px;
-                background-image: linear-gradient(rgba(1, 180, 228, 0.7), rgba(3, 37, 65, 0.8)), url('{{asset('images/banner.jpg')}}');
+                background-image: linear-gradient(rgba(1, 180, 228, 0.7), rgba(3, 37, 65, 0.8)), url('{{asset('banner.jpg')}}');
                 background-size: cover;
                 background-position: center;
                 color: white;
@@ -59,12 +59,12 @@
             }
             .banner h2 {
                 font-size: 3rem;
-                font-weight: 700;
+                font-weight: normal;
                 margin-bottom: 0px;
             }
             .banner h3 {
                 font-size: 1.5rem;
-                font-weight: 500;
+                font-weight: normal;
                 margin-bottom: 30px;
             }
             .search-input
@@ -123,7 +123,7 @@
                 </div>
                 <div class='search-input'>
                     <form method="post" action="{{url('/timkiem')}}">
-                        <input type="text" name='keyword' placeholder="Nhập tên bộ phim yêu thích để tìm kiếm">
+                        <input type="text" name='keyword' value="{{ isset($keyword) ? $keyword : '' }}" placeholder="Nhập tên bộ phim yêu thích để tìm kiếm">
                         <button class="search-btn">Tìm kiếm</button>
                         {{csrf_field()}}
                     </form>
