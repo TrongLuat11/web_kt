@@ -6,8 +6,8 @@
     <div class="bg-white p-4 rounded shadow-sm">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="mb-0">Danh sách quản lý phim</h2>
-            <a href="{{ url('/admin/create') }}" class="btn btn-primary">
-                <i class="fa fa-plus"></i> Thêm phim mới
+            <a href="{{ url('/admin/create') }}" class="btn btn-success">
+                Thêm
             </a>
         </div>
 
